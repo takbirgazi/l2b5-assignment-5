@@ -65,7 +65,4 @@ No Cash is a secure, modular, and role-based **RESTful API** for a digital walle
 | **dotenv**        | Environment configuration              |
 | **Postman**       | API testing/documentation              |
 
----
-
-## 📁 Project Structure
 
