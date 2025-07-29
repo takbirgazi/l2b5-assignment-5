@@ -22,6 +22,4 @@ export const setAuthCookie = (res: Response, tokenInfo: AuthTokens) => {
             sameSite: "none",
         });
     }
-
-
 }

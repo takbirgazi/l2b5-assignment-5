@@ -15,6 +15,7 @@ export const updateZodSchema = z.object({
     balance: z.number({ message: "Balance must be Number" }).optional(),
     role: z.enum(Object.values(Role) as [string]).optional(),
     isActive: z.enum(Object.values(IsActive) as [string]).optional(),
+    phone: z.string({ message: "Phone must be string" }).regex(/^(?:\+8801\d{9}|01\d{9})$/, { message: "Phone Number not valid" }).optional(),
     isDeleted: z.boolean({ message: "isDeleted must be true or false" }).optional(),
     isVerified: z.boolean({ message: "isVerified must be true or false" }).optional(),
     address: z.string({ message: "Address must be string" }).optional(),

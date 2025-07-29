@@ -7,6 +7,7 @@ import AppError from "../../errorHelpers/AppError";
 import { createUserTokens } from "../../utils/userTokens";
 import { setAuthCookie } from "../../utils/setCookie";
 import { AuthService } from "./auth.service";
+import { envVars } from "../../config/env";
 
 const credentialLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,7 +55,47 @@ const getNewAccessToken = catchAsync(async (req: Request, res: Response) => {
     })
 });
 
+const logOut = catchAsync(async (req: Request, res: Response) => {
+
+    // destroy cookies
+    res.clearCookie("accessToken", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax"
+    });
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax"
+    });
+
+    sendResponse(res, {
+        statusCode: statusCode.OK,
+        success: true,
+        message: "Log Out Successfully!",
+        data: null
+    })
+});
+
+const googleCallback = catchAsync(async (req: Request, res: Response) => {
+    let redirectTo = req.query.state ? req.query.state as string : "";
+    if (redirectTo.startsWith("/")) {
+        redirectTo = redirectTo.slice(1);
+    }
+    const user = req.user;
+    if (!user) {
+        throw new AppError(statusCode.NOT_FOUND, "User Not Found");
+    };
+
+    const tokenInfo = createUserTokens(user);
+    setAuthCookie(res, tokenInfo);
+
+    res.redirect(`${envVars.FRONTEND_URL}/${redirectTo}`);
+});
+
 export const AuthControllers = {
     credentialLogin,
     getNewAccessToken,
+    googleCallback,
+    logOut,
 }
