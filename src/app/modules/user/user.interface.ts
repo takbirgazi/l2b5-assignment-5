@@ -23,7 +23,7 @@ export interface IUser {
     _id?: Types.ObjectId,
     name: string,
     email: string,
-    balance: number,
+    wallet: Types.ObjectId,
     password?: string,
     phone?: string,
     picture?: string,

@@ -2,35 +2,85 @@
 import { envVars } from '../config/env';
 import bcryptjs from "bcryptjs";
 import { User } from '../modules/user/user.model';
-import { IAuthProvider, IUser, Role } from '../modules/user/user.interface';
+import { IAuthProvider, Role } from '../modules/user/user.interface';
+import { Wallet } from '../modules/wallet/wallet.model';
+import { WalletStatus } from '../modules/wallet/wallet.interface';
 
 export const seedSuperAdmin = async () => {
+    const session = await User.startSession();
+    session.startTransaction();
     try {
-        const isExistSuperAdmin = await User.findOne({ email: envVars.SUPER_ADMIN_EMAIL });
-        if (isExistSuperAdmin) {
-            console.log("Super Admin has already created!");
+        const { email, password, ...rest } = {
+            name: "Super Admin",
+            email: envVars.SUPER_ADMIN_EMAIL,
+            // wallet: new Types.ObjectId(), // Removed to avoid duplicate 'wallet'
+            password: envVars.SUPER_ADMIN_PASSWORD,
+            role: Role.SUPER_ADMIN,
+            isVerified: true
+        };
+
+        // Check if user already exists
+        const isExistUser = await User.findOne({ email }).session(session);
+        if (isExistUser) {
+            console.log("Super Admin has already been created!");
+            await session.abortTransaction();
+            session.endSession();
             return;
         }
 
-        const hashedPassword = await bcryptjs.hash(envVars.SUPER_ADMIN_PASSWORD, Number(envVars.BCRYPT_SALT_ROUND));
+        // Create wallet for the user
+        const wallet = await Wallet.create(
+            [
+                {
+                    balance: Number(envVars.INITIAL_ACCOUNT_BALANCE),
+                    status: WalletStatus.ACTIVE,
+                },
+            ],
+            { session }
+        );
+
+        // Hash password
+        const hashedPassword = await bcryptjs.hash(
+            password as string,
+            Number(envVars.BCRYPT_SALT_ROUND)
+        );
+
+        // Setup auth provider
         const authProvider: IAuthProvider = {
             provider: "credential",
-            providerId: envVars.SUPER_ADMIN_EMAIL
+            providerId: email as string,
         };
-        const payload: IUser = {
-            name: "Super Admin",
-            email: envVars.SUPER_ADMIN_EMAIL,
-            balance: 200,
-            password: hashedPassword,
-            auths: [authProvider],
-            role: Role.SUPER_ADMIN,
-            isVerified: true
-        }
 
-        const superAdmin = await User.create(payload);
-        console.log(superAdmin)
+        // Create user
+        const user = await User.create(
+            [
+                {
+                    email,
+                    password: hashedPassword,
+                    auths: [authProvider],
+                    wallet: wallet[0]._id,
+                    ...rest,
+                },
+            ],
+            { session }
+        );
+
+        // Link wallet to user
+        await Wallet.findByIdAndUpdate(
+            wallet[0]._id,
+            { userId: user[0]._id },
+            { new: true, runValidators: true, session }
+        );
+
+        await session.commitTransaction();
+        session.endSession();
+
+        console.log("Super Admin created:", user[0]);
+        return user[0];
 
     } catch (error) {
-        console.log(error)
+        await session.abortTransaction();
+        session.endSession();
+        throw error;
     }
 }

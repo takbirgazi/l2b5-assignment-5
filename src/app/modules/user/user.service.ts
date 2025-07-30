@@ -7,28 +7,77 @@ import { JwtPayload } from "jsonwebtoken";
 import { QueryBuilder } from "../../utils/QueryBuilder";
 import { userSearchableFields } from "./user.constant";
 import { IAuthProvider, IUser, Role } from "./user.interface";
+import { Wallet } from "../wallet/wallet.model";
+import { WalletStatus } from "../wallet/wallet.interface";
 
 const createUser = async (payload: Partial<IUser>) => {
-    const { email, password, ...rest } = payload;
+    const session = await User.startSession();
+    session.startTransaction();
 
-    const isExistUser = await User.findOne({ email });
+    try {
+        const { email, password, ...rest } = payload;
 
-    if (isExistUser) {
-        throw new AppError(statusCode.BAD_REQUEST, "User Already Exist");
+        // Check if user already exists
+        const isExistUser = await User.findOne({ email }).session(session);
+        if (isExistUser) {
+            throw new AppError(statusCode.BAD_REQUEST, "User Already Exist");
+        }
+
+        // Create wallet for the user
+        const wallet = await Wallet.create(
+            [
+                {
+                    balance: Number(envVars.INITIAL_ACCOUNT_BALANCE),
+                    status: WalletStatus.ACTIVE,
+                },
+            ],
+            { session }
+        );
+
+        // Hash password
+        const hashedPassword = await bcryptjs.hash(
+            password as string,
+            Number(envVars.BCRYPT_SALT_ROUND)
+        );
+
+        // Setup auth provider
+        const authProvider: IAuthProvider = {
+            provider: "credential",
+            providerId: email as string,
+        };
+
+        // Create user
+        const user = await User.create(
+            [
+                {
+                    email,
+                    password: hashedPassword,
+                    auths: [authProvider],
+                    wallet: wallet[0]._id,
+                    ...rest,
+                },
+            ],
+            { session }
+        );
+
+        // Link wallet to user
+        await Wallet.findByIdAndUpdate(
+            wallet[0]._id,
+            { userId: user[0]._id },
+            { new: true, runValidators: true, session }
+        );
+
+        await session.commitTransaction();
+        session.endSession();
+
+        return user;
+    } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+        throw error;
     }
-
-    const hashedPassword = await bcryptjs.hash(password as string, Number(envVars.BCRYPT_SALT_ROUND));
-
-    const authProvider: IAuthProvider = { provider: "credential", providerId: email as string }
-
-    const user = await User.create({
-        email,
-        password: hashedPassword,
-        auths: [authProvider],
-        ...rest
-    });
-    return user
 };
+
 
 const updateUser = async (userId: string, payload: Partial<IUser>, decodedToken: JwtPayload) => {
 
@@ -98,8 +147,6 @@ const getSingleUser = async (id: string) => {
         data: user
     }
 };
-
-
 
 export const UserService = {
     createUser,

@@ -1,6 +1,5 @@
 import { model, Schema } from "mongoose";
 import { IAuthProvider, IsActive, IUser, Role } from "./user.interface";
-import { envVars } from "../../config/env";
 
 
 const authProvider = new Schema<IAuthProvider>({
@@ -28,9 +27,10 @@ const userSchema = new Schema<IUser>({
         required: true,
         unique: true
     },
-    balance: {
-        type: Number,
-        default: Number(envVars.INITIAL_ACCOUNT_BALANCE)
+    wallet: {
+        type: Schema.Types.ObjectId,
+        ref: "Wallet",
+        required: true
     },
     password: { type: String },
     role: {
@@ -38,7 +38,7 @@ const userSchema = new Schema<IUser>({
         enum: Object.values(Role),
         default: Role.USER
     },
-    phone: { type: String, unique: true },
+    phone: { type: String },
     picture: { type: String },
     address: { type: String },
     isDeleted: { type: Boolean, default: false },
