@@ -33,7 +33,7 @@ passport.use(
 
             return done(null, isExistUser);
         } catch (error) {
-            return done(error)
+            return done(error);
         }
     })
 );
