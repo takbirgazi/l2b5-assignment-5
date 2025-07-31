@@ -11,9 +11,11 @@ export interface ITransaction {
     _id?: Types.ObjectId;
     user: Types.ObjectId;
     amount: number;
-    transactionId: string,
     type: TransactionType;
-    transactionWith: Types.ObjectId; // For transfers
+    transactionId: string,
+    transactionWith: Types.ObjectId;
+    fee?: number,
+    commission?: number,
     description?: string;
     createdAt?: Date;
     updatedAt?: Date;

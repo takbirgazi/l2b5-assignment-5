@@ -13,6 +13,11 @@ const transactionSchema = new Schema<ITransaction>({
         required: true,
         min: [0, 'Amount must be positive'],
     },
+    transactionId: {
+        type: String,
+        required: true,
+        unique: true
+    },
     type: {
         type: String,
         enum: Object.values(TransactionType),
@@ -21,6 +26,13 @@ const transactionSchema = new Schema<ITransaction>({
     transactionWith: {
         type: Schema.Types.ObjectId,
         ref: 'User',
+        required: true
+    },
+    fee: {
+        type: Number,
+    },
+    commission: {
+        type: Number,
     },
     description: {
         type: String,

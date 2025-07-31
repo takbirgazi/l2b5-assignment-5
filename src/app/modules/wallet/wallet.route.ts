@@ -9,6 +9,7 @@ import { Role } from "../user/user.interface";
 
 const router = Router();
 
-router.patch("/:email", checkAuth(...Object.values(Role)), validateRequest(updateWalletZodSchema), WalletController.updateWallet);
+router.patch("/cash-out/:email", checkAuth(Role.USER), validateRequest(updateWalletZodSchema), WalletController.cashOut);
+router.patch("/:email", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), validateRequest(updateWalletZodSchema), WalletController.updateWallet);
 
 export const WalletRouters = router;

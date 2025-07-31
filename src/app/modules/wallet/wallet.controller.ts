@@ -19,6 +19,21 @@ const updateWallet = catchAsync(async (req: Request, res: Response) => {
     })
 });
 
+const cashOut = catchAsync(async (req: Request, res: Response) => {
+    const payload = req.body;
+    const userEmail = req.params.email;
+    const decodedToken = req.user as JwtPayload;
+
+    const user = await WalletService.cashOut(userEmail, payload, decodedToken);
+    sendResponse(res, {
+        statusCode: statusCode.OK,
+        success: true,
+        message: "Information Update Successfully!",
+        data: user
+    })
+});
+
 export const WalletController = {
     updateWallet,
+    cashOut,
 }

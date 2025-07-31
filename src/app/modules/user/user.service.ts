@@ -115,7 +115,13 @@ const updateUser = async (userId: string, payload: Partial<IUser>, decodedToken:
 
 const getAllUser = async (query: Record<string, string>) => {
 
-    const queryBuilder = new QueryBuilder(User.find(), query);
+    const queryBuilder = new QueryBuilder(
+        User.find().select("-password").populate({
+            path: "wallet",
+            select: "balance status"
+        }),
+        query
+    );
 
     const totalUserData = queryBuilder
         .search(userSearchableFields)
@@ -135,10 +141,16 @@ const getAllUser = async (query: Record<string, string>) => {
 };
 
 const getMe = async (userId: string) => {
-    const user = await User.findById(userId).select("-password");
+    const user = await User.findById(userId)
+        .select("-password")
+        .populate({
+            path: "wallet",
+            select: "balance status"
+        });
+
     return {
         data: user
-    }
+    };
 };
 
 const getSingleUser = async (id: string) => {
