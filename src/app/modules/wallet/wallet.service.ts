@@ -36,7 +36,7 @@ const updateWallet = async (userEmail: string, payload: IPayload, decodedToken: 
                 if ((userWallet.balance - balance) < 0) {
                     throw new AppError(statusCode.BAD_REQUEST, "Something Went Wrong!");
                 }
-                await Wallet.findByIdAndUpdate(userWallet._id, { balance: (userWallet?.balance - balance) }, { new: true, runValidators: true, session })
+                await Wallet.findByIdAndUpdate(userWallet._id, { balance: (userWallet?.balance - balance) }, { new: true, runValidators: true, session });
             }
         }
 
@@ -49,7 +49,7 @@ const updateWallet = async (userEmail: string, payload: IPayload, decodedToken: 
         if (ifUserExist && payload.status) {
             if (decodedToken.role === Role.ADMIN || decodedToken.role === Role.SUPER_ADMIN) {
                 if (ifSendUserExist) {
-                    await Wallet.findByIdAndUpdate(ifSendUserExist.wallet, { status: payload.status }, { new: true, runValidators: true, session })
+                    await Wallet.findByIdAndUpdate(ifSendUserExist.wallet, { status: payload.status }, { new: true, runValidators: true, session });
                 }
             }
         }
@@ -73,7 +73,7 @@ const updateWallet = async (userEmail: string, payload: IPayload, decodedToken: 
                 if (sendUserWallet.balance < 0) {
                     throw new AppError(statusCode.BAD_REQUEST, "Something Went Wrong!");
                 }
-                await Wallet.findByIdAndUpdate(sendUserWallet._id, { balance: (sendUserWallet?.balance + balance) }, { new: true, runValidators: true, session })
+                await Wallet.findByIdAndUpdate(sendUserWallet._id, { balance: (sendUserWallet?.balance + balance) }, { new: true, runValidators: true, session });
             }
         }
 
