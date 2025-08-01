@@ -88,7 +88,7 @@ No Cash is a secure, modular, and role-based **RESTful API** for a digital walle
 
 ### 🔁 Transactions
 - Fully trackable and atomic
-- Types: `Cash Out`, `Cash In`, `Send Money`, `Received`, `cash-out`
+- Types: `Cash Out`, `Cash In`, `Send Money`, `Received`
 - Fields: amount, fee, commission, type, user, transactionWith
 
 ---
