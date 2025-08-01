@@ -344,7 +344,7 @@ const sendMoney = async (userEmail: string, payload: IPayload, decodedToken: Jwt
         await Transaction.create([{
             user: ifUserExist?._id,
             amount: payload.balance,
-            type: TransactionType.CASH_IN,
+            type: TransactionType.SEND_MONEY,
             transactionId: getTransactionId(),
             transactionWith: ifSendUserExist._id,
             fee: (payload.balance as number) * 0.5 / 100,
@@ -354,7 +354,7 @@ const sendMoney = async (userEmail: string, payload: IPayload, decodedToken: Jwt
         await Transaction.create([{
             user: ifSendUserExist._id,
             amount: payload.balance,
-            type: TransactionType.CASH_IN,
+            type: TransactionType.RECEIVE_MONEY,
             transactionId: getTransactionId(),
             transactionWith: ifUserExist?._id,
             fee: 0,
