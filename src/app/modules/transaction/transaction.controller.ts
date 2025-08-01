@@ -16,9 +16,23 @@ const getTransactionHistory = catchAsync(async (req: Request, res: Response) => 
         message: "Transaction Retrieve Successfully!",
         data: transaction
     });
+});
+
+const getAllTransactionHistory = catchAsync(async (req: Request, res: Response) => {
+    const query = req.query;
+    const allTransaction = await TransactionService.getAllTransactionHistory(query as Record<string, string>);
+
+    sendResponse(res, {
+        statusCode: statusCode.OK,
+        success: true,
+        message: "All Transaction Retrieve Successfully!",
+        data: allTransaction.data,
+        meta: allTransaction.meta
+    });
 })
 
 
 export const TransactionController = {
     getTransactionHistory,
+    getAllTransactionHistory,
 }
