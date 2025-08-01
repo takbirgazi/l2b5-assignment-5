@@ -29,3 +29,38 @@ const moduleRoute = [
 moduleRoute.forEach(route => {
     router.use(route.path, route.route);
 })
+
+
+/**
+* https://no-cash.vercel.app/
+
+Post Method---------------------
+api/v1/user/register
+
+Get Method----------------------
+api/v1/user/me
+api/v1/user/all-users
+api/v1/user/:id
+
+Patch Method---------------------
+api/v1/user/:id
+
+Post Method----------------------
+api/v1/auth/login
+api/v1/auth/refresh-token
+api/v1/auth/logout
+
+Get Method------------------------
+api/v1/auth/google
+
+Patch Method----------------------
+api/v1/wallet/cash-out/:email
+api/v1/wallet/cash-in/:email
+api/v1/wallet/send-money/:email
+api/v1/wallet/:email
+
+Get Method-------------------------
+api/v1/transaction/history
+api/v1/transaction/all-history
+
+*/

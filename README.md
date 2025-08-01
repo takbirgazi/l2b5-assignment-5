@@ -4,6 +4,12 @@ No Cash is a secure, modular, and role-based **RESTful API** for a digital walle
 
 ---
 
+## 🌐 API Base URL
+
+> **https://no-cash.vercel.app/**
+
+---
+
 ## 🚀 Table of Contents
 
 - [✨ Features](#-features)
@@ -20,6 +26,41 @@ No Cash is a secure, modular, and role-based **RESTful API** for a digital walle
 - [🎥 Project Walkthrough (For Submission)](#-project-walkthrough-for-submission)
 - [📈 Future Enhancements](#-future-enhancements)
 - [🧑 Author](#-author)
+
+---
+
+## 📦 API Endpoints Summary
+
+### **User APIs**
+| Method | Endpoint                              | Description                  |
+|--------|---------------------------------------|------------------------------|
+| POST   | `/api/v1/user/register`               | Register a new user          |
+| GET    | `/api/v1/user/me`                     | Get current user profile     |
+| GET    | `/api/v1/user/all-users`              | Get all users                |
+| GET    | `/api/v1/user/:id`                    | Get user by ID               |
+| PATCH  | `/api/v1/user/:id`                    | Update user by ID            |
+
+### **Auth APIs**
+| Method | Endpoint                              | Description                  |
+|--------|---------------------------------------|------------------------------|
+| POST   | `/api/v1/auth/login`                  | User login                   |
+| POST   | `/api/v1/auth/refresh-token`          | Refresh JWT token            |
+| POST   | `/api/v1/auth/logout`                 | User logout                  |
+| GET    | `/api/v1/auth/google`                 | Google OAuth login           |
+
+### **Wallet APIs**
+| Method | Endpoint                              | Description                  |
+|--------|---------------------------------------|------------------------------|
+| PATCH  | `/api/v1/wallet/cash-out/:email`      | Cash out from wallet         |
+| PATCH  | `/api/v1/wallet/cash-in/:email`       | Cash in to wallet            |
+| PATCH  | `/api/v1/wallet/send-money/:email`    | Send money to another wallet |
+| PATCH  | `/api/v1/wallet/:email`               | Update wallet by email       |
+
+### **Transaction APIs**
+| Method | Endpoint                              | Description                  |
+|--------|---------------------------------------|------------------------------|
+| GET    | `/api/v1/transaction/history`         | Get own transaction history  |
+| GET    | `/api/v1/transaction/all-history`     | Get all transactions         |
 
 ---
 
@@ -64,5 +105,4 @@ No Cash is a secure, modular, and role-based **RESTful API** for a digital walle
 | **bcrypt**        | Password hashing                       |
 | **dotenv**        | Environment configuration              |
 | **Postman**       | API testing/documentation              |
-
 
