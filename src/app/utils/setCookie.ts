@@ -12,7 +12,7 @@ export const setAuthCookie = (res: Response, tokenInfo: AuthTokens) => {
             httpOnly: true,
             secure: true,
             sameSite: "none",
-            partitioned: true
+            partitioned: true // For Google Chrome
         });
     }
     if (tokenInfo.refreshToken) {
@@ -20,7 +20,7 @@ export const setAuthCookie = (res: Response, tokenInfo: AuthTokens) => {
             httpOnly: true,
             secure: true,
             sameSite: "none",
-            partitioned: true
+            partitioned: true // For Google Chrome
         });
     }
 }

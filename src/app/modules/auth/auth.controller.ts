@@ -61,12 +61,14 @@ const logOut = catchAsync(async (req: Request, res: Response) => {
     res.clearCookie("accessToken", {
         httpOnly: true,
         secure: true,
-        sameSite: "lax"
+        sameSite: "none",
+        partitioned: true // For Google Chrome
     });
     res.clearCookie("refreshToken", {
         httpOnly: true,
         secure: true,
-        sameSite: "lax"
+        sameSite: "none",
+        partitioned: true // For Google Chrome
     });
 
     sendResponse(res, {
