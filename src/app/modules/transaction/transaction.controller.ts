@@ -9,12 +9,14 @@ import { JwtPayload } from "jsonwebtoken";
 
 const getTransactionHistory = catchAsync(async (req: Request, res: Response) => {
     const payload = req.user;
-    const transaction = await TransactionService.getTransactionHistory(payload as JwtPayload);
+    const query = req.query;
+    const transaction = await TransactionService.getTransactionHistory(payload as JwtPayload, query as Record<string, string>);
     sendResponse(res, {
         statusCode: statusCode.OK,
         success: true,
         message: "Transaction Retrieve Successfully!",
-        data: transaction
+        data: transaction.data,
+        meta: transaction.meta
     });
 });
 

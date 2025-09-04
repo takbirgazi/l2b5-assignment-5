@@ -3,13 +3,26 @@ import { Transaction } from "./transaction.mode";
 import { QueryBuilder } from "../../utils/QueryBuilder";
 
 
-const getTransactionHistory = async (payload: JwtPayload) => {
-    const transactionHistory = await Transaction.find({ user: payload.userId })
+const getTransactionHistory = async (payload: JwtPayload, query: Record<string, string>) => {
+
+    const queryBuilder = new QueryBuilder(Transaction.find({ user: payload.userId })
         .populate([
             { path: 'user', select: 'name email role' },
             { path: 'transactionWith', select: 'name email role' }
-        ]);
-    return transactionHistory;
+        ]), query);
+
+    const transactionHistory = queryBuilder
+        .search(["transactionId"])
+        .paginate();
+
+    const [data, meta] = await Promise.all([
+        transactionHistory.build(),
+        queryBuilder.getMeta({ user: payload.userId }) // Pass filter for meta
+    ]);
+    return {
+        data,
+        meta
+    };
 };
 
 const getAllTransactionHistory = async (query: Record<string, string>) => {
@@ -21,9 +34,7 @@ const getAllTransactionHistory = async (query: Record<string, string>) => {
         ]), query);
 
     const allTransactionHistory = queryBuilder
-        .filter()
-        .sort()
-        .fields()
+        .search(["transactionId"])
         .paginate();
 
     const [data, meta] = await Promise.all([

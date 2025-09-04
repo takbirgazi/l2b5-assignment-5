@@ -23,9 +23,9 @@ export class QueryBuilder<T> {
     }
 
     search(searchableField: string[]): this {
-        const searchTerm = this.query.searchTerm || ""
+        const search = this.query.search || ""
         const searchQuery = {
-            $or: searchableField.map(field => ({ [field]: { $regex: searchTerm, $options: "i" } }))
+            $or: searchableField.map(field => ({ [field]: { $regex: search, $options: "i" } }))
         }
         this.modelQuery = this.modelQuery.find(searchQuery);
 
@@ -60,11 +60,25 @@ export class QueryBuilder<T> {
         return this.modelQuery
     }
 
-    async getMeta() {
-        const totalDocuments = await this.modelQuery.model.countDocuments();
+    // async getMeta() {
+    //     const totalDocuments = await this.modelQuery.model.countDocuments();
+    //     const page = Number(this.query.page) || 1;
+    //     const limit = Number(this.query.limit) || 10;
+
+    //     const totalPage = Math.ceil(totalDocuments / limit);
+
+    //     return { page, limit, total: totalDocuments, totalPage };
+    // }
+
+    // Handel for Multiple Option
+    async getMeta(filter: Record<string, unknown> = {}) {
+        // Use the same query conditions applied earlier + optional extra filter
+        const conditions = { ...this.modelQuery.getFilter(), ...filter };
+
+        const totalDocuments = await this.modelQuery.model.countDocuments(conditions);
+
         const page = Number(this.query.page) || 1;
         const limit = Number(this.query.limit) || 10;
-
         const totalPage = Math.ceil(totalDocuments / limit);
 
         return { page, limit, total: totalDocuments, totalPage };
