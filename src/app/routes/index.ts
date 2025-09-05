@@ -3,6 +3,7 @@ import { userRoutes } from "../modules/user/user.route";
 import { AuthRouters } from "../modules/auth/auth.route";
 import { WalletRouters } from "../modules/wallet/wallet.route";
 import { TransactionRouters } from "../modules/transaction/transaction.route";
+import { AnalyticsRouter } from "../modules/analytics/analytics.route";
 
 
 export const router = Router();
@@ -24,6 +25,10 @@ const moduleRoute = [
         path: "/transaction",
         route: TransactionRouters
     },
+    {
+        path: "/analytics",
+        route: AnalyticsRouter
+    }
 ];
 
 moduleRoute.forEach(route => {
